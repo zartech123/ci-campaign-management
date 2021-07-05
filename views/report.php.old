@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="<?php echo base_url(); ?>assets/js/timetable.js"></script>
+	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/timetablejs.css">
+	<script src="<?php echo base_url(); ?>assets/js/bootstrap-datepicker.js"></script>
+	<link type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>assets/css/datepicker.css"/>
+	<script src="<?php echo base_url(); ?>assets/js/chosen.jquery.js"></script>
+	<link type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>assets/css/chosen.css"/>
+
+	
+	
+<?php 
+foreach($css_files as $file): ?>
+	<link type="text/css" rel="stylesheet" href="<?php echo $file; ?>" />
+<?php endforeach; ?>
+
+</head>
+<body>
+    <div class="container-fluid gc-container">
+	<div class="timetable"></div>
+<select id="range" class="chosen-select" size="8" data-placeholder="Date Range">
+<option value=1>To Day</options>									
+<option value=2>Last 7 Days</options>									
+<option value=3>Last 30 Days</options>									
+<option value=4>This Month</options>									
+<option value=5>Custom</options>									
+</select>
+	<hr>Choose the Date :
+<div id="datepicker" class="input-group date" data-date-format="dd-mm-yyyy">
+    <input class="form-control" type="text" readonly />
+    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+	</td>
+</div>
+</div>
+</body>
+<style type="text/css">
+.datepicker {
+  transform: translate(0, 20em);
+}
+</style>
+<script>
+						var timetable = new Timetable();
+						var renderer = new Timetable.Renderer(timetable);
+						timetable.setScope(8, 22); // optional, only whole hours between 0 and 23
+						renderer.draw('.timetable'); // any css selector
+
+function remove_duplicates(arr) {
+    var obj = {};
+    var ret_arr = [];
+    for (var i = 0; i < arr.length; i++) {
+        obj[arr[i]] = true;
+    }
+    for (var key in obj) {
+        ret_arr.push(key);
+    }
+    return ret_arr;
+}
+						
+$(function() 
+{
+	$("#datepicker").css("width","150");	
+	$("#datepicker").datepicker({ 
+			autoclose: true, 
+			todayHighlight: true
+	  }).datepicker('update', new Date());
+
+
+
+
+
+	  $('#datepicker').datepicker().on('changeDate', function(e) {
+			  $.ajax({
+			  		url: "<?php echo base_url(); ?>Report/getCampaign?type=2",
+						type: "GET",
+						dataType: "text",
+			  		success: function(response)
+					{
+						var timetable = new Timetable();
+						timetable.setScope(9, 22); // optional, only whole hours between 0 and 23
+						var json = $.parseJSON(response);
+						var start_time = [];
+						var end_time = [];
+						var start_date = [];
+						var name = [];
+						var start_date2 = [];
+						for (var i=0;i<json.length;++i)
+						{							
+							start_time.push(json[i].start_time);
+							end_time.push(json[i].end_time);
+							start_date.push(json[i].start_date);
+							name.push(json[i].name);
+												//alert(json[i].name+' '+json[i].start_time+' '+json[i].end_time+' '+json[i].start_date);
+						}
+						start_date2 = remove_duplicates(start_date);
+						timetable.addLocations(start_date2);
+						//alert(start_date2.length);
+						for (var i=0;i<start_date2.length;++i)
+						{				
+							for (var j=0;j<name.length;++j)
+							{
+								var name2 = name[j].split('|');
+								var start_time2 = start_time[j].split(':');
+								var end_time2 = end_time[j].split(':');
+								var legend = name2[1].trim();
+								if(name2[0]==start_date2[i])
+								{
+									timetable.addEvent(legend, start_date2[i], new Date(2015,7,17,start_time2[0].trim(),start_time2[1].trim()), new Date(2015,7,17,end_time2[0].trim(),end_time2[1].trim()),'#');
+								}									
+							}								
+						}
+						var renderer = new Timetable.Renderer(timetable);
+						renderer.draw('.timetable'); // any css selector
+						
+					},
+			  		error: function(response)
+			  		{
+			  		},
+			  });
+	//    e.format(0,"dd-mm-yyyy");
+	});  
+  
+  
+});
+
+
+
+</script>
+</html>

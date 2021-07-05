@@ -1,0 +1,71 @@
+<head>
+  <link rel="icon" href="<?php echo base_url(); ?>assets/img/voter-lg.png" type="image/png"/>
+  <title>Voter</title>
+  <script src="<?php echo base_url(); ?>assets/js/jquery-3.3.1.min.js"></script>
+  <script src="<?php echo base_url(); ?>assets/js/bootstrap.min.js"></script>
+  <link type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>assets/css/bootstrap.min.css" />
+
+</head>
+<?php
+		$user_name="";
+		$logo="";
+		$query = $this->db->query("SELECT a.name, photo, logo from caleg a, party b WHERE a.id_party=b.id_party and id_caleg=".$this->session->userdata('id_user'));
+		foreach ($query->result() as $row2)
+		{			
+			$user_name=$row2->name;
+			$user_photo = $row2->photo;
+			$logo = $row2->logo;
+		}
+?>
+
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse" area-controls="navbar" aria-expanded="false">
+			<span class="sr-only">Toggle Navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			</button>
+			<img src="<?php echo base_url(); ?>assets/img/voter-lg.png" width="70" height="50">&nbsp;&nbsp;</img>
+        </div>
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="<?php echo base_url(); ?>Voter"><i class="fa fa-group" style="font-size:16px"></i>&nbsp;&nbsp;Daftar Pemilih</a></li>
+        <li><a href="<?php echo base_url(); ?>Village">&nbsp;&nbsp;Wilayah Daerah Pemilihan</a></li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-pie-chart" style="font-size:16px"></i></span>&nbsp;&nbsp;Report Daftar Pemilih&nbsp;&nbsp;<span class="glyphicon glyphicon-menu-down"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="<?php echo base_url(); ?>Report3">Kabupaten / Kota</a></li>
+            <li><a href="<?php echo base_url(); ?>Report2">Kecamatan</a></li>
+            <li><a href="<?php echo base_url(); ?>Report">Kelurahan / Desa</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>&nbsp;&nbsp;Hasil Pemungutan Suara&nbsp;&nbsp;<span class="glyphicon glyphicon-menu-down"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="<?php echo base_url(); ?>TPS"><span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>&nbsp;&nbsp;Jumlah Suara</a></li>
+            <li><a href="<?php echo base_url(); ?>Report5">Report per Kabupaten / Kota</a></li>
+            <li><a href="<?php echo base_url(); ?>Report4">Report per Kecamatan</a></li>
+            <li><a href="<?php echo base_url(); ?>Report6">Report per Kelurahan / Desa</a></li>
+            <li><a href="<?php echo base_url(); ?>Report7">Report per TPS</a></li>
+          </ul>
+        </li>
+      </ul>
+	  <ul class="nav navbar-nav navbar-right">
+		<li><img width="40" height="40" src="<?php echo base_url(); ?>assets/uploads/<?php echo $logo; ?>" style="margin-top:5"></img>&nbsp;</li>
+		<?php
+		if($user_photo=="")
+		{?>
+		<li><img class="img-circle" width="40" height="40" src="<?php echo base_url(); ?>assets/img/avatar.png" style="margin-top:5"></img></li>		
+		<?php } else { ?>
+		<li><img class="img-circle" width="40" height="40" src="<?php echo base_url(); ?>assets/uploads/<?php echo $user_photo; ?>" style="margin-top:5"></img></li>
+		<?php } ?>
+        <li><a href="<?php echo base_url(); ?>Caleg" style="color:#428bca"><b><?php echo $user_name; ?></b></a></li>
+        <li><a href="<?php echo base_url(); ?>Login/logout">Sign Out&nbsp;&nbsp;<i class="fa fa-sign-out" style="font-size:16px"></i></a></li>
+      </ul>
+    </div>
+</nav>
+<br>
+<br>
+<br>
